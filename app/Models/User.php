@@ -49,13 +49,13 @@ class User extends Authenticatable
         ];
     }
 
-    // Un usuario tiene muchas fotos
+    // Get all photos for the user
     public function photos()
     {
         return $this->hasMany(Photo::class);
     }
 
-    // Un usuario tiene muchos comentarios
+    // Get all comments made by the user
     public function comments()
     {
         return $this->hasMany(Comment::class);

@@ -8,10 +8,10 @@
         comments: {{ $photo->comments->toJson() }}
      }">
 
-    <!-- Imagen de la Foto -->
-    <img src="{{ asset('storage/' . $photo->image_path) }}" class="card-img-top" alt="Foto">
+    <!-- Photo Image -->
+    <img src="{{ asset('storage/' . $photo->image_path) }}" class="card-img-top" alt="Photo by {{ $photo->user->name }}">
 
-    <!-- Cuerpo del Post -->
+    <!-- Post Body -->
     <div class="card-body p-4">
         <div class="d-flex align-items-center mb-3">
             <button 
@@ -31,7 +31,7 @@
                 <span x-show="liked" class="fs-4 text-danger">❤️</span>
                 <span x-show="!liked" class="fs-4 text-secondary">🤍</span>
             </button>
-            <span class="fw-bold" x-text="count + ' me gusta'"></span>
+            <span class="fw-bold" x-text="count + (count === 1 ? ' like' : ' likes')"></span>
         </div>
 
         @if($photo->caption)
@@ -40,10 +40,10 @@
 
         <hr class="text-muted">
 
-        <!-- Lista de Comentarios Principales -->
+        <!-- Main comments list -->
         <div class="comments-list mb-3">
             <template x-for="comment in comments" :key="comment.id">
-                <!-- Componente individual para cada comentario y sus respuestas -->
+                <!-- Main comment component for each comment and its replies -->
                 <div class="mb-3" x-data="{ 
                     showReplies: false, 
                     replies: [], 
@@ -64,33 +64,33 @@
                             });
                     }
                 }">
-                    <!-- Comentario Padre -->
+                    <!-- Main comment -->
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <span class="fw-bold me-1" x-text="'@' + (comment.user ? comment.user.name : 'usuario')"></span>
+                            <span class="fw-bold me-1" x-text="'@' + (comment.user ? comment.user.name : 'user')"></span>
                             <span x-text="comment.body"></span>
                         </div>
                         <button 
-                            @click="parentId = comment.id; replyToUser = comment.user ? comment.user.name : 'usuario'; $refs.commentInput.focus()" 
+                            @click="parentId = comment.id; replyToUser = comment.user ? comment.user.name : 'user'; $refs.commentInput.focus()" 
                             class="btn btn-link btn-sm text-muted p-0 text-decoration-none ms-2">
-                            <small>Responder</small>
+                            <small>Reply</small>
                         </button>
                     </div>
 
-                    <!-- Botón Ver Respuestas (Solo si tiene respuestas) -->
+                    <!-- Replies Button (only if it has replies) -->
                     <template x-if="repliesCount > 0">
                         <button 
                             @click="fetchReplies()" 
                             class="btn btn-link btn-sm text-primary p-0 text-decoration-none ms-3 mt-1 fw-bold">
-                            <small x-text="loadingReplies ? 'Cargando respuestas...' : (showReplies ? 'Ocultar respuestas' : '—— Ver ' + repliesCount + ' respuestas')"></small>
+                            <small x-text="loadingReplies ? 'Loading replies...' : (showReplies ? 'Hide replies' : '—— View ' + repliesCount + ' replies')"></small>
                         </button>
                     </template>
 
-                    <!-- Lista de Respuestas (Hijos con sangría/indentación) -->
+                    <!-- Replies List (Children with indentation) -->
                     <div x-show="showReplies" class="ms-4 mt-2 border-start ps-3" x-collapse>
                         <template x-for="reply in replies" :key="reply.id">
                             <div class="mb-1">
-                                <span class="fw-bold me-1" x-text="'@' + (reply.user ? reply.user.name : 'usuario')"></span>
+                                <span class="fw-bold me-1" x-text="'@' + (reply.user ? reply.user.name : 'user')"></span>
                                 <span x-text="reply.body"></span>
                             </div>
                         </template>
@@ -103,13 +103,13 @@
         <template x-if="parentId !== null">
             <div class="alert alert-secondary border-0 d-flex justify-content-between align-items-center p-2 mb-2 rounded-3">
                 <small class="text-dark">
-                    💬 Respondiendo al comentario de <strong x-text="'@' + replyToUser"></strong>
+                    💬 Reply to <strong x-text="'@' + replyToUser"></strong>
                 </small>
-                <button @click="parentId = null; replyToUser = ''" type="button" class="btn-close btn-sm" aria-label="Cancelar"></button>
+                <button @click="parentId = null; replyToUser = ''" type="button" class="btn-close btn-sm" aria-label="Cancel"></button>
             </div>
         </template>
 
-        <!-- Formulario de Entrada de Comentario -->
+        <!-- Comment Form -->
         <form @submit.prevent="
             if (!newComment.trim()) return;
             fetch('{{ route('comments.store', $photo) }}', {
@@ -144,9 +144,9 @@
                     x-model="newComment" 
                     type="text" 
                     class="form-control" 
-                    placeholder="Añade un comentario..." 
+                    placeholder="Add a comment..." 
                     required>
-                <button class="btn btn-outline-secondary" type="submit">Publicar</button>
+                <button class="btn btn-outline-secondary" type="submit">Publish</button>
             </div>
         </form>
     </div>

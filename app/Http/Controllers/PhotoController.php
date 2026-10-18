@@ -7,36 +7,37 @@ use Illuminate\Http\Request;
 
 class PhotoController extends Controller
 {
-    // 1. Muestra la vista con el formulario para subir foto
+    // The view with the form for creating a new photo
     public function create()
     {
         return view('photos.create');
     }
 
-    // 2. Procesa la imagen subida y la guarda
+    // Store the uploaded photo and its data in the database
     public function store(Request $request)
     {
-        // Validaciones básicas de la petición
+        // Basic validation for the uploaded image and optional caption
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240', // Máximo 10 MB
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240', // 10MB max
             'caption' => 'nullable|string|max:1000',
         ]);
 
-        // Guarda la foto físicamente en storage/app/public/photos
+        // Save the original photo in storage/app/public/photos
         $path = $request->file('image')->store('photos', 'public');
 
-        // Crea el registro en MariaDB asociado al usuario que está logueado
+        // Create a new photo record in the database associated with the authenticated user
         $photo = $request->user()->photos()->create([
             'image_path' => $path,
             'caption' => $request->caption,
         ]);
 
-        return redirect()->route('photos.show', $photo)->with('status', '¡Foto publicada con éxito!');
+        return redirect()->route('photos.show', $photo)->with('status', '¡Pic uploaded successfully!');
     }
 
+    // Show a specific photo along with its comments and related data
     public function show(Photo $photo)
     {
-        // Carga los comentarios que NO tienen parent_id, junto con el autor y la cantidad de respuestas que tiene cada uno
+        // Load comments that do NOT have a parent_id, along with their author and the number of replies each one has
         $photo->load(['user', 'comments' => function ($query) {
             $query->whereNull('parent_id')->with('user')->withCount('replies')->latest();
         }]);
@@ -44,9 +45,10 @@ class PhotoController extends Controller
         return view('photos.show', compact('photo'));
     }
 
+    // Toggle like for a specific photo
     public function toggleLike(Photo $photo)
     {
-        $userId = auth()->id(); // Obtiene el ID directo del usuario autenticado
+        $userId = auth()->id(); // Get the authenticated user's ID
 
         $like = $photo->likes()->where('user_id', $userId)->first();
 
@@ -65,5 +67,4 @@ class PhotoController extends Controller
             'likes_count' => $photo->likes()->count()
         ]);
     }
-
 }

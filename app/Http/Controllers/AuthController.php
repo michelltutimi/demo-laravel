@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // Procesar Registro
+    // Signup a new user and log them in
     public function register(Request $request)
     {
         $request->validate([
@@ -26,10 +26,10 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/')->with('success', '¡Cuenta creada y sesión iniciada!');
+        return redirect('/')->with('success', '¡Account created and logged in successfully!');
     }
 
-    // Procesar Login
+    // Login an existing user
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -39,15 +39,15 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect('/')->with('success', '¡Bienvenido de nuevo!');
+            return redirect('/')->with('success', '¡Welcome back!');
         }
 
         return back()->withErrors([
-            'email' => 'Las credenciales no coinciden con nuestros registros.',
+            'email' => 'The provided credentials do not match our records.',
         ]);
     }
 
-    // Cerrar Sesión
+    // Logout the authenticated user
     public function logout(Request $request)
     {
         Auth::logout();

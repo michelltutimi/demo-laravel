@@ -24,17 +24,17 @@ class CommentController extends Controller
         $comment->load('user');
 
         return response()->json([
-            'message' => 'Comentario publicado',
+            'message' => 'Comment published',
             'comment' => $comment
         ], 201);
     }
 
-    // Obtener las respuestas de un comentario específico (Lazy Loading)
+    // Get Replies from a Comment (Lazy Loading)
     public function indexReplies(Comment $comment)
     {
         $replies = $comment->replies()
             ->with('user')
-            ->oldest() // Muestra las respuestas en orden cronológico
+            ->oldest() // Order by oldest first for a natural conversation flow
             ->get();
 
         return response()->json($replies);
