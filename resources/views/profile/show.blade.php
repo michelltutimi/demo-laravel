@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $user->name }} (@ {{ $user->name }}) • Profile</title>
+    <title>@ {{ $user->username }} • Profile</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Alpine.js -->
@@ -96,14 +96,14 @@
             <!-- Avatar Placeholder -->
             <div class="col-12 col-md-4 d-flex justify-content-center mb-3 mb-md-0">
                 <div class="avatar-placeholder shadow-sm">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                    {{ strtoupper(substr($user->username, 0, 1)) }}
                 </div>
             </div>
 
             <!-- User Info and Controls -->
             <div class="col-12 col-md-8">
                 <div class="d-flex align-items-center flex-wrap gap-3 mb-3">
-                    <h2 class="h4 mb-0 fw-bold">@ {{ $user->name }}</h2>
+                    <h2 class="h4 mb-0 fw-bold">@ {{ $user->username }}</h2>
 
                     @if(auth()->id() === $user->id)
                         <!-- Own Profile Controls -->
@@ -154,7 +154,7 @@
             <div class="profile-grid">
                 @foreach($user->photos as $photo)
                     <div class="photo-grid-item">
-                        <img src="{{ asset('storage/' . $photo->image_path) }}" alt="Photo by {{ $user->name }}">
+                        <img src="{{ asset('storage/' . $photo->image_path) }}" alt="Photo by {{ $user->username }}">
                         
                         <a href="{{ route('photos.show', $photo) }}" class="photo-overlay">
                             <div>❤️ {{ $photo->likes_count }}</div>

@@ -33,8 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/comments/{comment}/replies', [CommentController::class, 'indexReplies'])->name('comments.replies');
 
     // User profile (Own route or to view other users)
-    // using user:name route model binding to fetch the user by username instead of ID
-    Route::get('/profile/{user:name?}', [ProfileController::class, 'show'])->name('profile.show');
+    // using user:username route model binding to fetch the user by username instead of ID
+    Route::get('/profile/{user:username?}', [ProfileController::class, 'show'])->name('profile.show');
     // Follow / Unfollow user action
-    Route::post('/users/{user:name}/follow', [FollowController::class, 'toggle'])->name('users.follow');
+    Route::post('/users/{user:username}/follow', [FollowController::class, 'toggle'])->name('users.follow');
 });

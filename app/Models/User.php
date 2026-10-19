@@ -20,7 +20,9 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
+        'bio',
         'password',
     ];
 
@@ -47,6 +49,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Define default route binding key for Eloquent.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'username';
     }
 
     // Get all photos for the user

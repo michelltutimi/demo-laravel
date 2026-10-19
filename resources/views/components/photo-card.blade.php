@@ -67,11 +67,11 @@
                     <!-- Main comment -->
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <span class="fw-bold me-1" x-text="'@' + (comment.user ? comment.user.name : 'user')"></span>
+                            <span class="fw-bold me-1" x-text="'@' + (comment.user ? comment.user.username : 'user')"></span>
                             <span x-text="comment.body"></span>
                         </div>
                         <button 
-                            @click="parentId = comment.id; replyToUser = comment.user ? comment.user.name : 'user'; $refs.commentInput.focus()" 
+                            @click="parentId = comment.id; replyToUser = comment.user ? comment.user.username : 'user'; $refs.commentInput.focus()" 
                             class="btn btn-link btn-sm text-muted p-0 text-decoration-none ms-2">
                             <small>Reply</small>
                         </button>
@@ -90,7 +90,7 @@
                     <div x-show="showReplies" class="ms-4 mt-2 border-start ps-3" x-collapse>
                         <template x-for="reply in replies" :key="reply.id">
                             <div class="mb-1">
-                                <span class="fw-bold me-1" x-text="'@' + (reply.user ? reply.user.name : 'user')"></span>
+                                <span class="fw-bold me-1" x-text="'@' + (reply.user ? reply.user.username : 'user')"></span>
                                 <span x-text="reply.body"></span>
                             </div>
                         </template>
