@@ -102,12 +102,20 @@
 
             <!-- User Info and Controls -->
             <div class="col-12 col-md-8">
+                <!-- Flash Status Message (Shows after profile update) -->
+                @if(session('status'))
+                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                        {{ session('status') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
                 <div class="d-flex align-items-center flex-wrap gap-3 mb-3">
                     <h2 class="h4 mb-0 fw-bold">@ {{ $user->username }}</h2>
 
                     @if(auth()->id() === $user->id)
                         <!-- Own Profile Controls -->
-                        <button class="btn btn-outline-secondary btn-sm fw-bold px-3" disabled>Edit profile</button>
+                        <a href="{{ route('profile.edit') }}" class="btn btn-outline-secondary btn-sm fw-bold px-3">Edit profile</a>
                     @else
                         <!-- Other User Profile Follow Button (Alpine.js Interactive) -->
                         <button 
@@ -142,9 +150,12 @@
                     <div><strong class="text-dark">{{ $user->following_count }}</strong> following</div>
                 </div>
 
-                <!-- User Bio Placeholder -->
+                <!-- User Display Name & Bio -->
                 <div>
-                    <div class="fw-bold">{{ strtoupper($user->name) }}</div>
+                    <div class="fw-bold">{{ $user->name }}</div>
+                    @if($user->bio)
+                        <p class="text-secondary mb-0">{{ $user->bio }}</p>
+                    @endif
                 </div>
             </div>
         </div>

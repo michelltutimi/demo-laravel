@@ -20,4 +20,34 @@ class ProfileController extends Controller
 
         return view('profile.show', compact('user'));
     }
+
+    // Show the form for editing the authenticated user's profile.
+    public function edit()
+    {
+        $user = auth()->user();
+        return view('profile.edit', compact('user'));
+    }
+
+    // Update the authenticated user's profile information.
+    public function update(Request $request)
+    {
+        $user = auth()->user();
+
+        // Validate form input (ignore current user ID for username uniqueness check)
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'bio' => 'nullable|string|max:500',
+        ]);
+
+        // Update user fields
+        $user->update([
+            'name' => $validated['name'],
+            'username' => strtolower($validated['username']),
+            'bio' => $validated['bio'],
+        ]);
+
+        return redirect()->route('profile.show', $user->username)
+                         ->with('status', 'Profile updated successfully!');
+    }
 }

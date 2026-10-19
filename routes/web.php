@@ -32,6 +32,10 @@ Route::middleware('auth')->group(function () {
     // Load replies for a comment
     Route::get('/comments/{comment}/replies', [CommentController::class, 'indexReplies'])->name('comments.replies');
 
+    // Edit profile routes (Must be defined BEFORE dynamic username parameter)
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/edit', [ProfileController::class, 'update'])->name('profile.update');
+
     // User profile (Own route or to view other users)
     // using user:username route model binding to fetch the user by username instead of ID
     Route::get('/profile/{user:username?}', [ProfileController::class, 'show'])->name('profile.show');
