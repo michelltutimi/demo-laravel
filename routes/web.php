@@ -16,7 +16,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth')->group(function () {
     // Logout only for authenticated users
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout'], )->name('logout');
 
     // Create a photo
     Route::get('/photos/create', [PhotoController::class, 'create'])->name('photos.create');
