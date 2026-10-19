@@ -6,10 +6,10 @@ use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\FeedController;
 
-Route::get('/', function () {
-    return view('home');
-});
+// Root URL handles both Guest Landing and Authenticated Feed
+Route::get('/', [FeedController::class, 'index'])->name('feed');
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
