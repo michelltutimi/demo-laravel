@@ -1,7 +1,10 @@
-<div class="card shadow-sm border-0 overflow-hidden mb-4" 
+@props(['photo'])
+
+<div class="card shadow-sm border-0 overflow-hidden mb-4 rounded-3" 
      x-data="{ 
         liked: {{ $photo->isLikedBy(auth()->user()) ? 'true' : 'false' }}, 
         count: {{ $photo->likes->count() }},
+        isOwnPhoto: {{ auth()->id() === $photo->user_id ? 'true' : 'false' }},
         newComment: '',
         parentId: null,
         replyToUser: '',
@@ -9,13 +12,15 @@
      }">
 
     <!-- Photo Image -->
-    <img src="{{ asset('storage/' . $photo->image_path) }}" class="card-img-top" alt="Photo by {{ $photo->user->name }}">
+    <img src="{{ asset('storage/' . $photo->image_path) }}" class="card-img-top" alt="Photo by {{ $photo->user->username }}">
 
     <!-- Post Body -->
     <div class="card-body p-4">
-        <div class="d-flex align-items-center mb-3">
+        <!-- Action Row: SVG Heart & Pure Numeric Count -->
+        <div class="d-flex align-items-center mb-3 gap-3">
             <button 
                 @click="
+                    if (isOwnPhoto) return;
                     liked = !liked;
                     liked ? count++ : count--;
                     fetch('{{ route('photos.like', $photo) }}', {
@@ -27,11 +32,17 @@
                         }
                     }).then(res => { if (!res.ok) { liked = !liked; liked ? count++ : count--; } });
                 "
-                class="btn btn-link p-0 me-3 text-decoration-none border-0 background-none">
-                <span x-show="liked" class="fs-4 text-danger">❤️</span>
-                <span x-show="!liked" class="fs-4 text-secondary">🤍</span>
+                :disabled="isOwnPhoto"
+                :class="isOwnPhoto ? 'opacity-50 cursor-not-allowed' : ''"
+                class="btn btn-link p-0 text-decoration-none border-0 background-none d-flex align-items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" 
+                    :fill="liked ? '#ed4956' : 'none'" 
+                    :stroke="liked ? '#ed4956' : '#262626'" 
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                <span class="fw-bold text-dark small" x-text="count"></span>
             </button>
-            <span class="fw-bold" x-text="count + (count === 1 ? ' like' : ' likes')"></span>
         </div>
 
         @if($photo->caption)
@@ -43,7 +54,6 @@
         <!-- Main comments list -->
         <div class="comments-list mb-3">
             <template x-for="comment in comments" :key="comment.id">
-                <!-- Main comment component for each comment and its replies -->
                 <div class="mb-3" x-data="{ 
                     showReplies: false, 
                     replies: [], 
@@ -77,7 +87,7 @@
                         </button>
                     </div>
 
-                    <!-- Replies Button (only if it has replies) -->
+                    <!-- Replies Button -->
                     <template x-if="repliesCount > 0">
                         <button 
                             @click="fetchReplies()" 
@@ -86,7 +96,7 @@
                         </button>
                     </template>
 
-                    <!-- Replies List (Children with indentation) -->
+                    <!-- Replies List -->
                     <div x-show="showReplies" class="ms-4 mt-2 border-start ps-3" x-collapse>
                         <template x-for="reply in replies" :key="reply.id">
                             <div class="mb-1">
@@ -99,7 +109,7 @@
             </template>
         </div>
 
-        <!-- Indicador de Respuesta Activa -->
+        <!-- Active Reply Banner -->
         <template x-if="parentId !== null">
             <div class="alert alert-secondary border-0 d-flex justify-content-between align-items-center p-2 mb-2 rounded-3">
                 <small class="text-dark">

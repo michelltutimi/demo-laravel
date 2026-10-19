@@ -48,17 +48,22 @@ class PhotoController extends Controller
     // Toggle like for a specific photo
     public function toggleLike(Photo $photo)
     {
-        $userId = auth()->id(); // Get the authenticated user's ID
+        $user = auth()->user();
 
-        $like = $photo->likes()->where('user_id', $userId)->first();
+        // Prevent users from liking their own photos
+        if ($user->id === $photo->user_id) {
+            return response()->json([
+                'message' => 'You cannot like your own photo.'
+            ], 403);
+        }
+
+        $like = $photo->likes()->where('user_id', $user->id)->first();
 
         if ($like) {
             $like->delete();
             $liked = false;
         } else {
-            $photo->likes()->create([
-                'user_id' => $userId
-            ]);
+            $photo->likes()->create(['user_id' => $user->id]);
             $liked = true;
         }
 
